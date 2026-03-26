@@ -8,12 +8,12 @@
 
 1. **Build da imagem Docker**
     ```bash
-    docker build -t nome-do-projeto:latest .
+    docker build -t sistema_faculdade .
     ```
 
 2. **Executar o container**
     ```bash
-    docker run -d --name nome-container -p PORTA_EXTERNA:PORTA_INTERNA nome-do-projeto:latest
+    docker run -it sistema_faculdade
     ```
 
 3. **Verificar o status**
@@ -21,14 +21,9 @@
     docker ps
     ```
 
-4. **Ver logs**
+4. **Parar o container**
     ```bash
-    docker logs nome-container
-    ```
-
-5. **Parar o container**
-    ```bash
-    docker stop nome-container
+    docker stop sistema_faculadde
     ```
 
 ### Usando Docker Compose (se aplicável)
