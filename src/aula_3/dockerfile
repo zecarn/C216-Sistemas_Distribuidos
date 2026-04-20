@@ -1,0 +1,23 @@
+FROM python:3.14-slim
+
+# Evita gerar arquivos .pyc e ativa logs imediatos
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+
+# Diretório de trabalho
+WORKDIR /app
+
+# Copia dependências primeiro (melhora cache do Docker)
+COPY requirements.txt .
+
+# Instala dependências
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copia apenas o código da aplicação
+COPY app ./app
+
+# Expõe a porta da API
+EXPOSE 8000
+
+# Comando para iniciar a aplicação
+CMD ["uvicorn", "app.main:app", "--host", "127.0.0.1", "--port", "8000"]
