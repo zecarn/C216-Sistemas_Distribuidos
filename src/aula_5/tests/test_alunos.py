@@ -22,24 +22,48 @@ def criar_aluno(nome: str, curso: str):
 
 
 def test_adicionar_tres_alunos_por_curso():
-    alunos_ges = [criar_aluno(f"Aluno GES {i}", "GES") for i in range(1, 4)]
-    alunos_gec = [criar_aluno(f"Aluno GEC {i}", "GEC") for i in range(1, 4)]
+    ges1 = client.post("/api/v1/alunos/", json={"nome": "Ana Lima", "email": "ana.lima@inatel.br", "curso": "GES"})
+    ges2 = client.post("/api/v1/alunos/", json={"nome": "Bruno Souza", "email": "bruno.souza@inatel.br", "curso": "GES"})
+    ges3 = client.post("/api/v1/alunos/", json={"nome": "Carla Mendes", "email": "carla.mendes@inatel.br", "curso": "GES"})
 
-    assert [response.status_code for response in alunos_ges + alunos_gec] == [201] * 6
-    assert [response.json()["id"] for response in alunos_ges] == ["GES1", "GES2", "GES3"]
-    assert [response.json()["id"] for response in alunos_gec] == ["GEC1", "GEC2", "GEC3"]
-    assert [response.json()["matricula"] for response in alunos_ges] == [1, 2, 3]
-    assert [response.json()["matricula"] for response in alunos_gec] == [1, 2, 3]
+    gec1 = client.post("/api/v1/alunos/", json={"nome": "Diego Rocha", "email": "diego.rocha@inatel.br", "curso": "GEC"})
+    gec2 = client.post("/api/v1/alunos/", json={"nome": "Elisa Ferreira", "email": "elisa.ferreira@inatel.br", "curso": "GEC"})
+    gec3 = client.post("/api/v1/alunos/", json={"nome": "Felipe Costa", "email": "felipe.costa@inatel.br", "curso": "GEC"})
+
+    assert ges1.status_code == 201
+    assert ges1.json() == {"id": "GES1", "nome": "Ana Lima", "email": "ana.lima@inatel.br", "curso": "GES", "matricula": 1}
+
+    assert ges2.status_code == 201
+    assert ges2.json() == {"id": "GES2", "nome": "Bruno Souza", "email": "bruno.souza@inatel.br", "curso": "GES", "matricula": 2}
+
+    assert ges3.status_code == 201
+    assert ges3.json() == {"id": "GES3", "nome": "Carla Mendes", "email": "carla.mendes@inatel.br", "curso": "GES", "matricula": 3}
+
+    assert gec1.status_code == 201
+    assert gec1.json() == {"id": "GEC1", "nome": "Diego Rocha", "email": "diego.rocha@inatel.br", "curso": "GEC", "matricula": 1}
+
+    assert gec2.status_code == 201
+    assert gec2.json() == {"id": "GEC2", "nome": "Elisa Ferreira", "email": "elisa.ferreira@inatel.br", "curso": "GEC", "matricula": 2}
+
+    assert gec3.status_code == 201
+    assert gec3.json() == {"id": "GEC3", "nome": "Felipe Costa", "email": "felipe.costa@inatel.br", "curso": "GEC", "matricula": 3}
 
 
 def test_listar_alunos():
-    criar_aluno("Ana Silva", "GES")
-    criar_aluno("Bruno Lima", "GEC")
+    criar_aluno("Ana Lima", "GES")
+    criar_aluno("Bruno Souza", "GES")
+    criar_aluno("Carla Mendes", "GES")
+    criar_aluno("Diego Rocha", "GEC")
+    criar_aluno("Elisa Ferreira", "GEC")
+    criar_aluno("Felipe Costa", "GEC")
 
     response = client.get("/api/v1/alunos/")
+    alunos = response.json()
 
     assert response.status_code == 200
-    assert len(response.json()) == 2
+    assert len(alunos) == 6
+    ids = [a["id"] for a in alunos]
+    assert all(i in ids for i in ["GES1", "GES2", "GES3", "GEC1", "GEC2", "GEC3"])
 
 
 def test_buscar_aluno_por_id():

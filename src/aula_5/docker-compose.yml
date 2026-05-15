@@ -1,0 +1,39 @@
+services:
+  api:
+    build: .
+    container_name: middleware_api
+    ports:
+      - "4040:4040"
+    volumes:
+      - .:/app
+    environment:
+      - DATABASE_URL=postgresql://admin:admin123@db:5432/sistemas_distribuidos
+    depends_on:
+      - db
+
+  db:
+    image: postgres:17
+    container_name: postgres_db
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+      POSTGRES_DB: sistemas_distribuidos
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./app/db/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  tests:
+    build: .
+    container_name: middleware_tests
+    volumes:
+      - .:/app
+    command: pytest -v
+    depends_on:
+      - db
+  
+volumes:
+  pgdata:
+      
